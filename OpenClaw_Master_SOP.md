@@ -1,4 +1,4 @@
-14 AI prompts that take OpenClaw from a glorified chatbot to an autonomous assistant that thinks, remembers, and works while you sleep. One file. One upload. Full setup. By Dopamine Digital (dopaminedigital.io) | Free community: https://dopaminedigital.io
+14 AI prompts that take OpenClaw from a glorified chatbot to an autonomous assistant that thinks, remembers, and works while you sleep. One file. One upload. Full setup.
 
 # OpenClaw Master Configuration SOP
 ## 14 Prompts, One File, One Shot -- Upload This and Let OpenClaw Do the Rest
