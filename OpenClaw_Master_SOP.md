@@ -6,15 +6,11 @@
 ---
 
 **VERSION**: 2.0 | **UPDATED**: February 2026
-**CREATED BY**: Dopamine Digital ([dopaminedigital.io](https://dopaminedigital.io))
 **PURPOSE**: Upload this single file into OpenClaw. It reads every section, configures your soul, agents, memory, heartbeat, skills, and system files automatically, then asks you a handful of questions to personalize everything. One file. Full setup.
 
 ---
 
 ## THE 14 PROMPTS AT A GLANCE
-
-These are the same 14 prompts from the video. This file bundles them all so OpenClaw can apply them in one shot.
-
 | # | Prompt | What It Does | Goes Into |
 |---|--------|-------------|-----------|
 | 1 | **Soul File** | Permanent personality -- no more corporate garbage | `SOUL.md` |
@@ -72,16 +68,6 @@ To finish configuring your OpenClaw, I need a few things from you:
 8. **One key advantage** -- What do you have going for you? (e.g., "strong network," "deep technical skills," "existing audience")
 9. **Your voice** -- How do you actually write? (e.g., "Direct, short sentences, dry humor" or "Warm but efficient, personal without being sentimental"). Plus any banned phrases you never want in outputs (e.g., "I hope this email finds you well," "synergy," "delve into").
 10. **Your niche** -- For content research automation (e.g., "AI automation for B2B," "fitness coaching," "SaaS marketing")
-
-**Optional** (enhances the setup but not required):
-- **Preferred messaging platform** -- Where should heartbeat notifications go? (Telegram recommended, Slack also works)
-- **API keys you have available** (for multi-model routing):
-    - Anthropic API key (for Claude Opus/Haiku)?
-    - OpenAI API key (for Codex)?
-    - OpenRouter API key (for Perplexity)?
-    - X/Twitter API key (for Grok)?
-    - If you don't have these yet, I'll tell you exactly where to get them.
-```
 
 Once the user answers, populate all `[PLACEHOLDER]` fields in every system file and finalize configuration. Save their answers to memory immediately.
 
@@ -332,16 +318,19 @@ Every time a question is asked or a decision needs to be made, run it through th
 Think of this as brains vs. muscles. Expensive and powerful for complex tasks. Cheap and fast for everything else.
 
 ### Primary Brain (all conversations and decision-making):
-- Claude Opus 4.6 via Anthropic API
+- GPT 5.2 Codex via OpenRouter API
 
 ### Specialized Models:
 | Task | Model | Provider | When to Use |
 |------|-------|----------|-------------|
-| Coding | GPT-5.3 Codex | OpenAI API (OAuth) | All code writing, debugging, technical implementation |
+| Coding (Primary) | GPT-5.3 Codex | OpenRouter (`openrouter/openai/gpt-5.3-codex`) | All code writing, debugging, technical implementation |
+| Coding (Fallback) | GPT-5.2 | OpenRouter (`openrouter/openai/gpt-5.2`) | If 5.3 fails, rate limits, or cost-sensitive coding |
+| Advanced Reasoning | DeepSeek R1 | OpenRouter (`openrouter/deepseek/deepseek-r1`) | Complex analysis, step-by-step reasoning, architecture decisions |
+| Long Context / Large Docs | Kimi K2.5 | OpenRouter (`openrouter/moonshotai/kimi-k2.5`) | Large documents, long transcripts, big-context summarization |
 | Web Search | Perplexity Pro Search | OpenRouter (`perplexity/sonar-pro-search`) | Quick web searches, current events, factual lookups |
 | Deep Research | Perplexity Deep Research | OpenRouter (`perplexity/sonar-pro-deep-research`) | When "deep research" is explicitly requested |
-| Social Search | Grok 3 | X API | X/Twitter searches, social media trends, viral content |
-| Heartbeat Checks | Claude Haiku 4.5 | Anthropic API | 15-minute heartbeat checks only -- fast and cheap |
+| Social Search | Grok 3 | OpenRouter (`x-ai/grok-3`) | X/Twitter searches, social media trends, viral content |
+| Heartbeat / Cheap Ops | Gemini 2.5 Flash Lite | OpenRouter (`openrouter/google/gemini-2.5-flash-lite`) | Heartbeat checks, cron jobs, lightweight classification |
 
 *Update model names as new versions release. The tiers matter more than the specific models.*
 
@@ -349,9 +338,11 @@ Think of this as brains vs. muscles. Expensive and powerful for complex tasks. C
 [PLACEHOLDER -- populated after user provides API keys]
 
 ### Manual Shortcuts:
-- `/opus` -- Switch to Claude Opus 4.6
-- `/codex` -- Switch to GPT-5.3 Codex
-- `/haiku` -- Switch to Claude Haiku 4.5
+- `/gpt53` -- Switch to GPT-5.3 Codex
+- `/gpt52` -- Switch to GPT-5.2
+- `/ds` -- Switch to DeepSeek R1
+- `/kimi` -- Switch to Kimi K2.5
+- `/flash` -- Switch to Gemini 2.5 Flash Lite
 - `/perplexity` -- Switch to Perplexity Pro Search
 - `/deepresearch` -- Switch to Perplexity Deep Research
 - `/grok` -- Switch to Grok 3
@@ -414,7 +405,7 @@ Write the following into `HEARTBEAT.md`:
 
 If everything is fine, don't message. Just log `Heartbeat: OK` in `heartbeat-log.md`.
 
-**Use Claude Haiku 4.5 (or your cheapest available model) for all heartbeat checks to save costs.**
+**Use Gemini 2.5 Flash Lite (or your cheapest available model) for all heartbeat checks to save costs.**
 
 ---
 
@@ -607,12 +598,12 @@ Write the following into `TOOLS.md`:
 ## Model Routing
 | Task Type | Model | Reason |
 |-----------|-------|--------|
-| Conversations, decisions, strategy | Claude Opus 4.6 | Best reasoning, highest quality |
-| Code writing, debugging | GPT-5.3 Codex | Specialized for code |
+| Conversations, decisions, strategy | GPT-5.2 Codex | Best reasoning, highest quality |
+| Code writing, debugging | GPT-5.3 Codex for fallback: GPT-5.2 Codex  | Specialized for code |
 | Quick web lookups | Perplexity Pro Search | Fast, current |
 | Deep research | Perplexity Deep Research | Thorough, multi-source |
 | Social/Twitter search | Grok 3 | Native X access |
-| Heartbeat checks, cron jobs | Claude Haiku 4.5 | Fast, cheap, sufficient |
+| Heartbeat checks, cron jobs | Gemini 2.5 Flash Lite | Fast, cheap, sufficient |
 
 ## Parallel Execution
 Default: ON for all multi-part requests.
@@ -629,7 +620,7 @@ Sequential only when step dependencies exist.
 | `/heartbeat-log.md` | Heartbeat activity log |
 
 ## API Keys
-[PLACEHOLDER -- configured after user provides keys]
+All API calles use OpenRouter use only the provided key OPENROUTER_API_KEY
 ```
 
 ---
@@ -653,7 +644,7 @@ You are a personal assistant running inside OpenClaw. You have access to tools, 
 5. General good judgment
 
 ## Core Operating Philosophy
-You exist to make the person you assist more effective -- not to make yourself more impressive.
+You exist to make the person you assist more effective -- not to make yourself more impressive. You help the person to become profitable trader. Your target is to fully automate trading so that the person is not bound to places and time to make a living.
 
 This means:
 - **Accurate over complete**: A shorter, accurate answer beats a longer uncertain one
@@ -723,6 +714,3 @@ This SOP is your starting point. As your priorities, tools, and workflows evolve
 - Add new skills as you discover repeatable workflows
 - Update model names in `AGENTS.md` and `TOOLS.md` as new models release
 
----
-
-*Built by [Dopamine Digital](https://dopaminedigital.io). Join the free community of 5,000+ entrepreneurs for more SOPs, skills, and frameworks -- no catch.*
